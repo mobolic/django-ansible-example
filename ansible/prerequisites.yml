@@ -1,0 +1,14 @@
+# See https://gist.github.com/gwillem/4ba393dceb55e5ae276a87300f6b8e6f.
+- hosts: all
+  gather_facts: false
+  tasks:
+  - name: install Python 2 if needed
+    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+    become: yes
+    register: output
+    changed_when: output.stdout != ""
+  - name: install aptitude if needed
+    raw: test -e /usr/bin/aptitude || (apt -y update && apt install -y aptitude)
+    become: yes
+    register: output
+    changed_when: output.stdout != ""

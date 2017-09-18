@@ -1,0 +1,10 @@
+# Ensure host has access to Python 2 and aptitude.
+- include: prerequisites.yml
+
+- hosts: vagrant
+  roles:
+    - postgresql
+    - webapp
+  vars_files:
+    - group_vars/development
+    - secret_vars/development

@@ -1,0 +1,35 @@
+# We could install nginx from the Ubuntu repositories, but then we would
+# be getting an older version.
+- name: add nginx package key
+  apt_key: id=7BD9BF62 url=http://nginx.org/keys/nginx_signing.key state=present
+  become: true
+
+# Why mainline and not stable? See "Which Version Should I Use?" on
+# https://www.nginx.com/blog/nginx-1-6-1-7-released/
+- name: add mainline nginx repository
+  apt_repository: repo="deb http://nginx.org/packages/mainline/ubuntu/ {{ ansible_lsb.codename }} nginx" state=present
+  become: true
+
+- name: install nginx
+  apt:  pkg=nginx
+        state=present
+        update_cache=yes
+  become: true
+
+# Overwrite configuration file for nginx as a whole.
+- name: overwrite global nginx configuration file
+  template: src=nginx-global.conf dest=/etc/nginx/nginx.conf
+            force=yes
+            owner=root group=root mode=644
+  become: true
+  notify:
+    - restart nginx
+
+# Overwrite default site configuration with configuration for our project.
+- name: overwrite nginx site configuration file
+  template: src=nginx-site.conf dest=/etc/nginx/conf.d/default.conf
+            force=yes
+            owner=root group=root mode=644
+  become: true
+  notify:
+    - restart nginx

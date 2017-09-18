@@ -1,0 +1,2 @@
+# This is the requirements file used for local development environments.
+-r base.txt
